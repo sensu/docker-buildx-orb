@@ -3,5 +3,5 @@ version: 2.1
 description: Common CircleCI tasks for Docker buildx.
 
 display:
-  source_url: https://github.com/amdprophet/docker-buildx-orb
+  source_url: https://github.com/sensu/docker-buildx-orb
   home_url: https://docs.docker.com/buildx/working-with-buildx/
