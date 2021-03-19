@@ -4,6 +4,10 @@ parameters:
     description: The version of buildx to install.
     type: string
     default: 0.4.1
+  qemu-user-static-version:
+    description: The version of qemu-user-static to use.
+    type: string
+    default: 5.2.0-2
 steps:
   - run:
       name: Install Docker buildx
@@ -22,10 +26,16 @@ steps:
       command: docker buildx install
   - run:
       name: Start multiarch/qemu-user-static container
-      command: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+      command: >
+        docker run --rm --privileged
+        multiarch/qemu-user-static:<< parameters.qemu-user-static-version >>
+        --reset -p yes
   - run:
       name: Create docker-multiarch builder
       command: docker buildx create --name docker-multiarch
+  - run:
+      name: List buildx builders
+      command: docker buildx ls
   - run:
       name: Inspect & bootstrap docker-multiarch builder
       command: docker buildx inspect --builder docker-multiarch --bootstrap
