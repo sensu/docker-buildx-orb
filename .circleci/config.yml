@@ -1,0 +1,47 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@<<pipeline.parameters.dev-orb-version>>
+  orb-tools: circleci/orb-tools@10.0.3
+
+parameters:
+  # These pipeline parameters are required by the "trigger-integration-tests-workflow"
+  # job, by default.
+  run-integration-tests:
+    type: boolean
+    default: false
+  dev-orb-version:
+    type: string
+    default: "dev:alpha"
+
+jobs:
+  integration-test-install-specified-version:
+    parameters:
+      os:
+        type: executor
+    executor: <<parameters.os>>
+    steps:
+      - checkout
+      - node/install:
+          node-version: "13.11.0"
+          install-yarn: true # Test the install of YARN
+          yarn-version: "1.22.5"
+      - run:
+          command: |
+            if ! node --version | grep -q "13"; then
+              echo "Node version 13 not found"
+              exit 1
+            fi
+  build-medium:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+    steps:
+      - run: uname -a
+      - run: echo "Hello, Arm!"
+
+workflows:
+  build:
+    jobs:
+      - build-medium
+      - build-large
